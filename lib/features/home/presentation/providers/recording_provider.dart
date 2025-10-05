@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -11,6 +13,7 @@ class Recording extends _$Recording {
       isRecording: false,
       transcribedText: '',
       translatedText: '',
+      waveformAmplitudes: [], // NEW: Store waveform data
     );
   }
 
@@ -19,14 +22,19 @@ class Recording extends _$Recording {
       isRecording: true,
       transcribedText: '',
       translatedText: '',
+      waveformAmplitudes: [],
     );
 
     // TODO: Integrate STT service
     _simulateTranscription();
+    _simulateWaveform(); // NEW: Start waveform animation
   }
 
   void stopRecording() {
-    state = state.copyWith(isRecording: false);
+    state = state.copyWith(
+      isRecording: false,
+      waveformAmplitudes: [], // Clear waveform
+    );
     // TODO: Stop STT service
   }
 
@@ -42,7 +50,13 @@ class Recording extends _$Recording {
     state = state.copyWith(
       transcribedText: '',
       translatedText: '',
+      waveformAmplitudes: [],
     );
+  }
+
+  // NEW: Update waveform amplitudes
+  void updateWaveform(List<double> amplitudes) {
+    state = state.copyWith(waveformAmplitudes: amplitudes);
   }
 
   // Temporary simulation
@@ -53,28 +67,52 @@ class Recording extends _$Recording {
       setTranslation('Hola, ¿cómo estás hoy?');
     }
   }
+
+  // NEW: Simulate waveform data
+  void _simulateWaveform() {
+    if (!state.isRecording) return;
+
+    Future.delayed(const Duration(milliseconds: 80), () {
+      if (state.isRecording) {
+        final random = math.Random();
+        final amplitudes = List.generate(
+          40,
+              (i) {
+            // Random amplitude between 0.1 and 1.0
+            return 0.1 + random.nextDouble() * 0.9;
+          },
+        );
+        updateWaveform(amplitudes);
+        _simulateWaveform();
+      }
+    });
+  }
 }
 
 class RecordingState {
   final bool isRecording;
   final String transcribedText;
   final String translatedText;
+  final List<double> waveformAmplitudes; // NEW
 
   const RecordingState({
     required this.isRecording,
     required this.transcribedText,
     required this.translatedText,
+    this.waveformAmplitudes = const [],
   });
 
   RecordingState copyWith({
     bool? isRecording,
     String? transcribedText,
     String? translatedText,
+    List<double>? waveformAmplitudes,
   }) {
     return RecordingState(
       isRecording: isRecording ?? this.isRecording,
       transcribedText: transcribedText ?? this.transcribedText,
       translatedText: translatedText ?? this.translatedText,
+      waveformAmplitudes: waveformAmplitudes ?? this.waveformAmplitudes,
     );
   }
 }

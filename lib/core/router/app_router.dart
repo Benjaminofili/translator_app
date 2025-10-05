@@ -3,14 +3,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../features/onboarding/presentation/screens/onboarding_screen.dart';
 import '../../features/home/presentation/screens/home_screen.dart';
+import '../../features/history/presentation/screens/history_screen.dart';
+import '../../features/settings/presentation/screens/settings_screen.dart';
 import '../utils/onboarding_service.dart';
 
-// Provider for onboarding status
 final seenOnboardingProvider = FutureProvider<bool>((ref) async {
   return await OnboardingService.hasSeenOnboarding();
 });
 
-// Router provider
 final routerProvider = Provider<GoRouter>((ref) {
   final seenOnboarding = ref.watch(seenOnboardingProvider);
 
@@ -19,16 +19,20 @@ final routerProvider = Provider<GoRouter>((ref) {
     routes: [
       GoRoute(
         path: '/onboarding',
-        builder: (context, state) =>  OnboardingScreen(),
+        builder: (context, state) => const OnboardingScreen(),
       ),
       GoRoute(
         path: '/home',
-        builder: (context, state) =>  HomeScreen(),
+        builder: (context, state) => const HomeScreen(),
+      ),
+      GoRoute(
+        path: '/history',
+        builder: (context, state) => const HistoryScreen(),
+      ),
+      GoRoute(
+        path: '/settings',
+        builder: (context, state) => const SettingsScreen(),
       ),
     ],
-    redirect: (context, state) {
-      // Optional: Add redirect logic if needed
-      return null;
-    },
   );
 });

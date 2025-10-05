@@ -116,6 +116,7 @@ flutter:
     - assets/animations/
     - assets/translations/
     - assets/configs/
+    - assets/images/
     # Models loaded dynamically from app directory, not bundled
 
   fonts:

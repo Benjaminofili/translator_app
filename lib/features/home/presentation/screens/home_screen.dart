@@ -9,20 +9,11 @@ import '../widgets/translation_dual_field.dart';
 import '../widgets/translation_actions.dart';
 import '../widgets/input_mode_selector.dart';
 import '../widgets/recording_button.dart';
+import '../widgets/waveform_visualizer.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/constants/app_strings.dart';
 
-/// Home Screen - Main Translation Interface
-///
-/// This is the primary screen following standard translator app patterns:
-/// - Language selector header at the top
-/// - Dual field layout (source/target text)
-/// - Translation actions (copy, share, listen)
-/// - Input mode selector (voice/text/camera)
-/// - Voice recording button at bottom
-///
-/// Path: lib/features/home/presentation/screens/home_screen.dart
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
 
@@ -40,17 +31,13 @@ class HomeScreen extends ConsumerWidget {
             icon: const Icon(Icons.history_rounded),
             tooltip: 'History',
             onPressed: () {
-              // TODO: Navigate to History Screen
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('History coming soon')),
-              );
+              context.push('/history');
             },
           ),
           IconButton(
             icon: const Icon(Icons.settings_rounded),
             tooltip: 'Settings',
             onPressed: () {
-              // TODO: Navigate to Settings Screen
               context.push('/settings');
             },
           ),
@@ -79,7 +66,7 @@ class HomeScreen extends ConsumerWidget {
             ),
           ),
 
-          // Bottom Input Section
+          // Bottom Section: Waveform → Button → Input Selector
           Container(
             decoration: BoxDecoration(
               color: Theme.of(context).colorScheme.surface,
@@ -96,12 +83,11 @@ class HomeScreen extends ConsumerWidget {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
+                  // Waveform (shows when recording in voice mode)
+                  if (inputMode.isVoice && recordingState.isRecording)
+                    const WaveformVisualizer(),
+
                   const SizedBox(height: AppTheme.spacingMd),
-
-                  // Input Mode Selector (Voice/Text/Camera)
-                  const InputModeSelector(),
-
-                  const SizedBox(height: AppTheme.spacingLg),
 
                   // Main Action Button (Voice or Text based on mode)
                   if (inputMode.isVoice)
@@ -112,6 +98,11 @@ class HomeScreen extends ConsumerWidget {
                     _buildCameraButton(context),
 
                   const SizedBox(height: AppTheme.spacingLg),
+
+                  // Input Mode Selector (Voice/Text/Camera) - Always at bottom
+                  const InputModeSelector(),
+
+                  const SizedBox(height: AppTheme.spacingMd),
                 ],
               ),
             ),
@@ -121,7 +112,6 @@ class HomeScreen extends ConsumerWidget {
     );
   }
 
-  /// Text input button for keyboard mode
   Widget _buildTextInputButton(BuildContext context, WidgetRef ref) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingLg),
@@ -157,7 +147,6 @@ class HomeScreen extends ConsumerWidget {
     );
   }
 
-  /// Camera button placeholder
   Widget _buildCameraButton(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingLg),
@@ -195,7 +184,6 @@ class HomeScreen extends ConsumerWidget {
     );
   }
 
-  /// Show text input dialog
   void _showTextInputDialog(BuildContext context, WidgetRef ref) {
     final textController = TextEditingController();
     final recordingNotifier = ref.read(recordingProvider.notifier);
@@ -227,8 +215,6 @@ class HomeScreen extends ConsumerWidget {
             onPressed: () {
               if (textController.text.trim().isNotEmpty) {
                 recordingNotifier.setTranscription(textController.text.trim());
-                // TODO: Trigger translation
-                // For now, simulate translation
                 recordingNotifier.setTranslation(
                   'Translation: ${textController.text.trim()}',
                 );
