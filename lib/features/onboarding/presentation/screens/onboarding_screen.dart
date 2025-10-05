@@ -33,7 +33,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       await OnboardingService.setSeenOnboarding();
 
       if (mounted) {
-        // Use this instead of context.go('/home')
         context.go('/home');
       }
     } catch (e) {
