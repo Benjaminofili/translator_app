@@ -1,0 +1,126 @@
+name: ai_voice_translator
+description: Offline real-time voice translation app
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  # Updated minimum SDK to >=3.8.0 for compatibility with latest Riverpod/Freezed
+  sdk: '>=3.8.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino: ^0.0.1
+  cupertino_icons: ^1.0.8
+
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # State Management & Architecture (RIVERPOD)
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  flutter_riverpod: ^3.0.1               # State management (Latest: ^3.0.1)
+  riverpod_annotation: ^3.0.1           # Code generation annotations (No newer stable major version)
+
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # Navigation
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  go_router: ^16.2.4                      # Declarative routing (Latest: ^16.2.4)
+  smooth_page_indicator: ^1.1.0
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # Audio (Recording & Playback)
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  record: ^6.1.1                          # Cross-platform audio recording (Latest: ^6.1.1)
+  just_audio: ^0.10.5                     # Audio playback (No newer stable major version)
+  audio_waveforms: ^1.3.0                 # Waveform visualization (No newer stable major version)
+
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # AI Model Integration
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  ffi: ^2.1.4                            # Dart FFI for C/C++ bindings (No newer stable major version)
+  # Note: The `onnxruntime` package is now often superseded by `flutter_onnxruntime` for Flutter
+  # I've kept the original for minimal change, but suggest researching the flutter-specific package
+  onnxruntime: ^1.4.1                    # ONNX Runtime for translation models (Latest: ^1.4.1)
+
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # Storage & Persistence
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+#  hive: ^2.2.3                            # NoSQL database (No newer stable major version)
+#  hive_flutter: ^1.1.0                    # Flutter integration (No newer stable major version)
+  shared_preferences: ^2.5.3              # Simple key-value (No newer stable major version)
+  path_provider: ^2.1.5                   # File paths for models (No newer stable major version)
+
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # Internationalization
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  easy_localization: ^3.0.8               # UI translations (No newer stable major version)
+  # intl is now correctly omitted
+
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # Permissions
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  permission_handler: ^12.0.1             # Microphone, storage permissions (No newer stable major version)
+
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # Logging & Error Handling
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  logger: ^2.6.1                          # Pretty console logging (No newer stable major version)
+
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # UI & Animations
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  google_fonts: ^6.3.2
+  flutter_svg: ^2.2.1                 # SVG rendering (No newer stable major version)
+  lottie: ^3.3.2                          # Lottie animations (No newer stable major version)
+  shimmer: ^3.0.0                         # Skeleton loaders (No newer stable major version)
+  gap: ^3.0.1                             # Spacing widgets (No newer stable major version)
+
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # Utilities
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  freezed_annotation: ^3.1.0              # Immutable models (No newer stable major version)
+  json_annotation: ^4.9.0                 # JSON serialization (No newer stable major version)
+  uuid: ^4.5.1                            # Generate unique IDs (No newer stable major version)
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# DEV DEPENDENCIES
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0                   # Linting rules (No newer stable major version)
+
+  # Code Generation
+  build_runner: ^2.4.11                  # Code generation runner (No newer stable major version)
+  riverpod_generator: ^3.0.1              # Riverpod code generation (No newer stable major version)
+  riverpod_lint: ^3.0.1                  # Riverpod-specific linting (No newer stable major version)
+  freezed: ^3.2.3                         # Immutable classes generator (Latest: ^3.2.3)
+  json_serializable: ^6.6.0               # JSON serialization (No newer stable major version)
+#  hive_generator: ^2.0.1                 # Hive adapters (No newer stable major version)
+#  custom_lint: ^0.8.1                     # Required for riverpod_lint (Latest: ^0.8.1)
+
+  # Testing
+  mocktail: ^1.0.4                        # Mocking (No newer stable major version)
+#
+
+  # Performance & Analysis
+  flutter_launcher_icons: ^0.14.4         # App icon generation (No newer stable major version)
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# FLUTTER CONFIG
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/icons/
+    - assets/fonts/
+    - assets/animations/
+    - assets/translations/
+    - assets/configs/
+    # Models loaded dynamically from app directory, not bundled
+
+  fonts:
+    - family: Inter
+      fonts:
+        - asset: assets/fonts/Inter-Regular.ttf
+        - asset: assets/fonts/Inter-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/Inter-Bold.ttf
