@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
+import '../../../../core/theme/app_theme.dart';
+import '../../../../core/theme/app_colors.dart';
 
 class PermissionCard extends StatefulWidget {
   const PermissionCard({super.key});
@@ -19,7 +21,6 @@ class _PermissionCardState extends State<PermissionCard> with AutomaticKeepAlive
   @override
   void initState() {
     super.initState();
-    // Small delay to ensure widget is fully mounted
     Future.delayed(const Duration(milliseconds: 500), () {
       if (mounted) {
         _autoRequestPermission();
@@ -43,7 +44,6 @@ class _PermissionCardState extends State<PermissionCard> with AutomaticKeepAlive
       return;
     }
 
-    // Auto-request on first time
     status = await Permission.microphone.request();
 
     if (mounted) {
@@ -72,17 +72,21 @@ class _PermissionCardState extends State<PermissionCard> with AutomaticKeepAlive
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Permission Required'),
-        content: const Text(
+        title: Text(
+          'Permission Required',
+          style: Theme.of(context).textTheme.titleLarge,
+        ),
+        content: Text(
           'Microphone permission is required for voice translation. '
               'Please enable it in settings.',
+          style: Theme.of(context).textTheme.bodyMedium,
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
             child: const Text('Cancel'),
           ),
-          TextButton(
+          FilledButton(
             onPressed: () {
               Navigator.pop(ctx);
               openAppSettings();
@@ -100,22 +104,22 @@ class _PermissionCardState extends State<PermissionCard> with AutomaticKeepAlive
 
     return Center(
       child: Card(
-        margin: const EdgeInsets.all(24),
-        elevation: 4,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        margin: const EdgeInsets.all(AppTheme.spacingLg),
         child: Padding(
-          padding: const EdgeInsets.all(32.0),
+          padding: const EdgeInsets.all(AppTheme.spacingXl),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               if (_isChecking)
-                const Column(
+                Column(
                   children: [
-                    CircularProgressIndicator(),
-                    SizedBox(height: 20),
+                    const CircularProgressIndicator(),
+                    const SizedBox(height: AppTheme.spacingMd),
                     Text(
                       'Requesting microphone permission...',
-                      style: TextStyle(fontSize: 16, color: Colors.grey),
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: AppColors.textSecondary,
+                      ),
                     ),
                   ],
                 )
@@ -123,39 +127,32 @@ class _PermissionCardState extends State<PermissionCard> with AutomaticKeepAlive
                 Icon(
                   granted ? Icons.check_circle : Icons.mic_off,
                   size: 80,
-                  color: granted ? Colors.green : Colors.orange,
+                  color: granted ? AppColors.success : AppColors.warning,
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: AppTheme.spacingMd),
                 Text(
                   granted
                       ? "Permission Granted!"
                       : "Microphone Permission Needed",
-                  style: const TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: Theme.of(context).textTheme.titleLarge,
                   textAlign: TextAlign.center,
                 ),
-                const SizedBox(height: 10),
+                const SizedBox(height: AppTheme.spacingSm),
                 Text(
                   granted
                       ? "You're ready to use voice translation."
                       : "We need microphone access to translate your voice in real-time.",
                   textAlign: TextAlign.center,
-                  style: const TextStyle(color: Colors.grey, fontSize: 14),
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: AppColors.textSecondary,
+                  ),
                 ),
-                const SizedBox(height: 24),
+                const SizedBox(height: AppTheme.spacingLg),
                 if (!granted)
                   ElevatedButton.icon(
                     onPressed: _requestPermission,
                     icon: const Icon(Icons.mic),
                     label: const Text("Grant Permission"),
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 32,
-                        vertical: 14,
-                      ),
-                    ),
                   ),
               ],
             ],

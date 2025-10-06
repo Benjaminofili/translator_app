@@ -6,58 +6,20 @@ part of 'recording_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-// GENERATED CODE - DO NOT MODIFY BY HAND
-// ignore_for_file: type=lint, type=warning
-
-@ProviderFor(Recording)
-const recordingProvider = RecordingProvider._();
-
-final class RecordingProvider
-    extends $NotifierProvider<Recording, RecordingState> {
-  const RecordingProvider._()
-    : super(
-        from: null,
-        argument: null,
-        retry: null,
-        name: r'recordingProvider',
-        isAutoDispose: true,
-        dependencies: null,
-        $allTransitiveDependencies: null,
-      );
-
-  @override
-  String debugGetCreateSourceHash() => _$recordingHash();
-
-  @$internal
-  @override
-  Recording create() => Recording();
-
-  /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(RecordingState value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<RecordingState>(value),
-    );
-  }
-}
-
 String _$recordingHash() => r'009b61dcf8a0b0e5d1d741cfbf5587d920d7820b';
 
-abstract class _$Recording extends $Notifier<RecordingState> {
-  RecordingState build();
-  @$mustCallSuper
-  @override
-  void runBuild() {
-    final created = build();
-    final ref = this.ref as $Ref<RecordingState, RecordingState>;
-    final element =
-        ref.element
-            as $ClassProviderElement<
-              AnyNotifier<RecordingState, RecordingState>,
-              RecordingState,
-              Object?,
-              Object?
-            >;
-    element.handleValue(ref, created);
-  }
-}
+/// See also [Recording].
+@ProviderFor(Recording)
+final recordingProvider =
+    AutoDisposeNotifierProvider<Recording, RecordingState>.internal(
+  Recording.new,
+  name: r'recordingProvider',
+  debugGetCreateSourceHash:
+      const bool.fromEnvironment('dart.vm.product') ? null : _$recordingHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+typedef _$Recording = AutoDisposeNotifier<RecordingState>;
+// ignore_for_file: type=lint
+// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

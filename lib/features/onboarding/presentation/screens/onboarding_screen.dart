@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/utils/onboarding_service.dart';
 import '../../../../core/utils/permission_service.dart';
+import '../../../../core/theme/app_theme.dart';
+import '../../../../core/theme/app_colors.dart';
 import '../widgets/tutorial_carousel.dart';
 
 class OnboardingScreen extends StatefulWidget {
@@ -15,7 +17,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   bool _isLastPage = false;
   bool _isLoading = false;
 
-  // In onboarding_screen.dart, update _completeOnboarding:
   Future<void> _completeOnboarding() async {
     if (_isLoading) return;
 
@@ -38,7 +39,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: $e')),
+          SnackBar(
+            content: Text('Error: $e'),
+            backgroundColor: AppColors.error,
+          ),
         );
       }
     } finally {
@@ -52,17 +56,21 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Microphone Permission Required'),
-        content: const Text(
+        title: Text(
+          'Microphone Permission Required',
+          style: Theme.of(context).textTheme.titleLarge,
+        ),
+        content: Text(
           'This app needs microphone access to translate your voice. '
               'Please grant permission in settings.',
+          style: Theme.of(context).textTheme.bodyMedium,
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
             child: const Text('Cancel'),
           ),
-          TextButton(
+          FilledButton(
             onPressed: () {
               Navigator.pop(ctx);
               PermissionService.openSettings();
@@ -91,9 +99,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           if (!_isLastPage)
             TextButton(
               onPressed: _skipOnboarding,
-              child: const Text(
+              child: Text(
                 'Skip',
-                style: TextStyle(fontSize: 16),
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  color: AppColors.primary,
+                ),
               ),
             ),
         ],

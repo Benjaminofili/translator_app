@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+import '../../../../core/theme/app_theme.dart';
+import '../../../../core/theme/app_colors.dart';
 import 'welcome_animation.dart';
 import 'language_selector.dart';
 import 'permission_card.dart';
@@ -29,7 +31,7 @@ class _TutorialCarouselState extends State<TutorialCarousel> {
       final newIndex = _controller.page?.round() ?? 0;
       if (newIndex != _currentIndex) {
         setState(() => _currentIndex = newIndex);
-        widget.onLastPageChanged?.call(newIndex == 3); // 4 pages total (0-3)
+        widget.onLastPageChanged?.call(newIndex == 3);
       }
     });
   }
@@ -43,7 +45,7 @@ class _TutorialCarouselState extends State<TutorialCarousel> {
   void _nextPage() {
     if (_currentIndex < 3) {
       _controller.nextPage(
-        duration: const Duration(milliseconds: 300),
+        duration: AppTheme.durationMedium,
         curve: Curves.easeInOut,
       );
     }
@@ -52,7 +54,7 @@ class _TutorialCarouselState extends State<TutorialCarousel> {
   void _previousPage() {
     if (_currentIndex > 0) {
       _controller.previousPage(
-        duration: const Duration(milliseconds: 300),
+        duration: AppTheme.durationMedium,
         curve: Curves.easeInOut,
       );
     }
@@ -65,37 +67,35 @@ class _TutorialCarouselState extends State<TutorialCarousel> {
         Expanded(
           child: PageView(
             controller: _controller,
-            children: const [
-              // Page 1: Welcome Animation
-              WelcomeAnimation(),
+            children: [
+              const WelcomeAnimation(),
+              const LanguageSelector(),
+              const PermissionCard(),
 
-              // Page 2: Language Selection
-              LanguageSelector(),
-
-              // Page 3: Permission Request
-              PermissionCard(),
-
-              // Page 4: Final Info
+              // Page 4: Final Info - Updated with theme
               Center(
                 child: Padding(
-                  padding: EdgeInsets.all(24.0),
+                  padding: const EdgeInsets.all(AppTheme.spacingLg),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.mic, size: 100, color: Colors.blue),
-                      SizedBox(height: 30),
+                      Icon(
+                        Icons.mic_rounded,
+                        size: 100,
+                        color: AppColors.primary,
+                      ),
+                      const SizedBox(height: AppTheme.spacingXl),
                       Text(
                         "You're All Set!",
-                        style: TextStyle(
-                          fontSize: 28,
-                          fontWeight: FontWeight.bold,
-                        ),
+                        style: Theme.of(context).textTheme.headlineMedium,
                       ),
-                      SizedBox(height: 16),
+                      const SizedBox(height: AppTheme.spacingMd),
                       Text(
                         "Tap the microphone to start translating your voice in real-time.",
                         textAlign: TextAlign.center,
-                        style: TextStyle(fontSize: 16, color: Colors.grey),
+                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                          color: AppColors.textSecondary,
+                        ),
                       ),
                     ],
                   ),
@@ -105,28 +105,25 @@ class _TutorialCarouselState extends State<TutorialCarousel> {
           ),
         ),
 
-        // Page Indicator
         Padding(
-          padding: const EdgeInsets.only(bottom: 20),
+          padding: const EdgeInsets.only(bottom: AppTheme.spacingMd),
           child: SmoothPageIndicator(
             controller: _controller,
             count: 4,
             effect: ExpandingDotsEffect(
               dotHeight: 10,
               dotWidth: 10,
-              activeDotColor: Theme.of(context).primaryColor,
-              dotColor: Colors.grey.shade400,
+              activeDotColor: AppColors.primary,
+              dotColor: Theme.of(context).colorScheme.outlineVariant,
             ),
           ),
         ),
 
-        // Navigation Buttons
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0),
+          padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingLg),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              // Back Button (hidden on first page)
               if (_currentIndex > 0)
                 TextButton.icon(
                   onPressed: _previousPage,
@@ -134,40 +131,23 @@ class _TutorialCarouselState extends State<TutorialCarousel> {
                   label: const Text('Back'),
                 )
               else
-                const SizedBox(width: 80), // Placeholder for spacing
+                const SizedBox(width: 80),
 
-              // Next/Get Started Button
               if (_currentIndex < 3)
-                ElevatedButton.icon(
+                ElevatedButton(
                   onPressed: _nextPage,
-                  label: const Text('Next'),
-                  // icon: const Icon(Icons.arrow_forward),
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 24,
-                      vertical: 12,
-                    ),
-                  ),
+                  child: const Text('Next'),
                 )
               else
                 ElevatedButton(
                   onPressed: widget.onFinished,
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 32,
-                      vertical: 12,
-                    ),
-                  ),
-                  child: const Text(
-                    'Get Started',
-                    style: TextStyle(fontSize: 16),
-                  ),
+                  child: const Text('Get Started'),
                 ),
             ],
           ),
         ),
 
-        const SizedBox(height: 40),
+        const SizedBox(height: AppTheme.spacingXl),
       ],
     );
   }

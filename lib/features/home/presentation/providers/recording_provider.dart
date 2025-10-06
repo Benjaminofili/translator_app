@@ -2,6 +2,10 @@ import 'dart:math' as math;
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import '../../../history/data/repositories/history_repository_impl.dart';
+import '../../../history/domain/entities/translation_history.dart';
+import 'package:uuid/uuid.dart';
+import 'language_provider.dart';
 
 part 'recording_provider.g.dart';
 
@@ -13,7 +17,7 @@ class Recording extends _$Recording {
       isRecording: false,
       transcribedText: '',
       translatedText: '',
-      waveformAmplitudes: [], // NEW: Store waveform data
+      waveformAmplitudes: [],
     );
   }
 
@@ -27,13 +31,13 @@ class Recording extends _$Recording {
 
     // TODO: Integrate STT service
     _simulateTranscription();
-    _simulateWaveform(); // NEW: Start waveform animation
+    _simulateWaveform();
   }
 
   void stopRecording() {
     state = state.copyWith(
       isRecording: false,
-      waveformAmplitudes: [], // Clear waveform
+      waveformAmplitudes: [],
     );
     // TODO: Stop STT service
   }
@@ -42,8 +46,12 @@ class Recording extends _$Recording {
     state = state.copyWith(transcribedText: text);
   }
 
-  void setTranslation(String text) {
+  Future<void> setTranslation(String text) async {
     state = state.copyWith(translatedText: text);
+    // Save to history when translation is set
+    if (state.transcribedText.isNotEmpty && text.isNotEmpty) {
+      await _saveToHistory(state.transcribedText, text);
+    }
   }
 
   void clearTexts() {
@@ -54,9 +62,29 @@ class Recording extends _$Recording {
     );
   }
 
-  // NEW: Update waveform amplitudes
   void updateWaveform(List<double> amplitudes) {
     state = state.copyWith(waveformAmplitudes: amplitudes);
+  }
+
+  // Save translation to history
+  Future<void> _saveToHistory(String source, String translated) async {
+    final repository = HistoryRepositoryImpl();
+    // Note: languageSelectionProvider is not defined in the provided code
+    // Assuming it's available in the app's provider setup
+    final languages = ref.read(languageSelectionProvider).value;
+
+    if (languages != null) {
+      await repository.addHistory(
+        TranslationHistory(
+          id: const Uuid().v4(),
+          sourceText: source,
+          translatedText: translated,
+          sourceLanguage: languages.from,
+          targetLanguage: languages.to,
+          timestamp: DateTime.now(),
+        ),
+      );
+    }
   }
 
   // Temporary simulation
@@ -64,11 +92,10 @@ class Recording extends _$Recording {
     await Future.delayed(const Duration(seconds: 2));
     if (state.isRecording) {
       setTranscription('Hello, how are you today?');
-      setTranslation('Hola, ¿cómo estás hoy?');
+      await setTranslation('Hola, ¿cómo estás hoy?');
     }
   }
 
-  // NEW: Simulate waveform data
   void _simulateWaveform() {
     if (!state.isRecording) return;
 
@@ -77,10 +104,7 @@ class Recording extends _$Recording {
         final random = math.Random();
         final amplitudes = List.generate(
           40,
-              (i) {
-            // Random amplitude between 0.1 and 1.0
-            return 0.1 + random.nextDouble() * 0.9;
-          },
+              (i) => 0.1 + random.nextDouble() * 0.9,
         );
         updateWaveform(amplitudes);
         _simulateWaveform();
@@ -93,7 +117,7 @@ class RecordingState {
   final bool isRecording;
   final String transcribedText;
   final String translatedText;
-  final List<double> waveformAmplitudes; // NEW
+  final List<double> waveformAmplitudes;
 
   const RecordingState({
     required this.isRecording,
