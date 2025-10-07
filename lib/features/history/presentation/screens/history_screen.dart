@@ -154,9 +154,8 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen>
             return HistoryListItem(
               history: item,
               onTap: () => _showHistoryDetail(item),
-              onFavorite: () {
-                ref.read(historyProvider.notifier).toggleFavorite(item.id);
-              },
+              onFavorite: () async {
+                await ref.read(historyProvider.notifier).toggleFavorite(item.id);},
               onDelete: () => _showDeleteDialog(item.id),
             );
           },
@@ -207,9 +206,8 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen>
             return HistoryListItem(
               history: item,
               onTap: () => _showHistoryDetail(item),
-              onFavorite: () {
-                ref.read(historyProvider.notifier).toggleFavorite(item.id);
-                ref.invalidate(favoritesProvider);
+              onFavorite: () async {
+                await ref.read(historyProvider.notifier).toggleFavorite(item.id);
               },
               onDelete: () => _showDeleteDialog(item.id),
             );

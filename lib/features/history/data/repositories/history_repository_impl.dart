@@ -7,6 +7,10 @@ class HistoryRepositoryImpl implements HistoryRepository {
   static const String _boxName = 'translation_history';
 
   Future<Box<TranslationHistoryModel>> get _box async {
+    // Check if box is already open
+    if (Hive.isBoxOpen(_boxName)) {
+      return Hive.box<TranslationHistoryModel>(_boxName);
+    }
     return await Hive.openBox<TranslationHistoryModel>(_boxName);
   }
 

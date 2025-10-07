@@ -6,7 +6,7 @@ part of 'history_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$favoritesHash() => r'c1030f633b83fb92251785d182a1a0b545811e0e';
+String _$favoritesHash() => r'dc5f56aa4417749b76013627b23da50efa910a39';
 
 /// See also [favorites].
 @ProviderFor(favorites)
@@ -21,7 +21,7 @@ final favoritesProvider =
 );
 
 typedef FavoritesRef = AutoDisposeFutureProviderRef<List<TranslationHistory>>;
-String _$historyHash() => r'64440da09876b4f88557aa90a950d753c00011b5';
+String _$historyHash() => r'5893312881a42677a1d87d1b936edb0f12290f54';
 
 /// See also [History].
 @ProviderFor(History)

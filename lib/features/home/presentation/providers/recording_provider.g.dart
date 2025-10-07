@@ -6,7 +6,7 @@ part of 'recording_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$recordingHash() => r'009b61dcf8a0b0e5d1d741cfbf5587d920d7820b';
+String _$recordingHash() => r'7b55e9bdf416fcb6eb5ebdbc53243a8bc7dc9c3a';
 
 /// See also [Recording].
 @ProviderFor(Recording)

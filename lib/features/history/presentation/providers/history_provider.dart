@@ -1,42 +1,47 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../domain/entities/translation_history.dart';
-import '../../data/repositories/history_repository_impl.dart';
+import '../providers/repository_provider.dart';
 
 part 'history_provider.g.dart';
 
 @riverpod
 class History extends _$History {
-  late final HistoryRepositoryImpl _repository;
-
   @override
   Future<List<TranslationHistory>> build() async {
-    _repository = HistoryRepositoryImpl();
-    return await _repository.getAllHistory();
+    final repository = ref.watch(historyRepositoryProvider);
+    return await repository.getAllHistory();
   }
 
   Future<void> addHistory(TranslationHistory history) async {
-    await _repository.addHistory(history);
+    final repository = ref.read(historyRepositoryProvider);
+    await repository.addHistory(history);
     ref.invalidateSelf();
   }
 
   Future<void> deleteHistory(String id) async {
-    await _repository.deleteHistory(id);
+    final repository = ref.read(historyRepositoryProvider);
+    await repository.deleteHistory(id);
     ref.invalidateSelf();
   }
 
   Future<void> clearAll() async {
-    await _repository.clearAllHistory();
+    final repository = ref.read(historyRepositoryProvider);
+    await repository.clearAllHistory();
     ref.invalidateSelf();
   }
 
   Future<void> toggleFavorite(String id) async {
-    await _repository.toggleFavorite(id);
+    final repository = ref.read(historyRepositoryProvider);
+    await repository.toggleFavorite(id);
     ref.invalidateSelf();
   }
 }
 
 @riverpod
 Future<List<TranslationHistory>> favorites(FavoritesRef ref) async {
-  final repository = HistoryRepositoryImpl();
+  // Watch the main history to auto-update when favorites change
+  ref.watch(historyProvider);
+
+  final repository = ref.watch(historyRepositoryProvider);
   return await repository.getFavorites();
 }

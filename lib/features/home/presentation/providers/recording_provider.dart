@@ -5,6 +5,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../../history/data/repositories/history_repository_impl.dart';
 import '../../../history/domain/entities/translation_history.dart';
 import 'package:uuid/uuid.dart';
+import '../../../history/presentation/providers/repository_provider.dart';
 import 'language_provider.dart';
 
 part 'recording_provider.g.dart';
@@ -29,7 +30,6 @@ class Recording extends _$Recording {
       waveformAmplitudes: [],
     );
 
-    // TODO: Integrate STT service
     _simulateTranscription();
     _simulateWaveform();
   }
@@ -39,7 +39,6 @@ class Recording extends _$Recording {
       isRecording: false,
       waveformAmplitudes: [],
     );
-    // TODO: Stop STT service
   }
 
   void setTranscription(String text) {
@@ -68,26 +67,27 @@ class Recording extends _$Recording {
 
   // Save translation to history
   Future<void> _saveToHistory(String source, String translated) async {
-    final repository = HistoryRepositoryImpl();
-    // Note: languageSelectionProvider is not defined in the provided code
-    // Assuming it's available in the app's provider setup
-    final languages = ref.read(languageSelectionProvider).value;
+    try {
+      final repository = ref.read(historyRepositoryProvider);
+      final languages = ref.read(languageSelectionProvider).value;
 
-    if (languages != null) {
-      await repository.addHistory(
-        TranslationHistory(
-          id: const Uuid().v4(),
-          sourceText: source,
-          translatedText: translated,
-          sourceLanguage: languages.from,
-          targetLanguage: languages.to,
-          timestamp: DateTime.now(),
-        ),
-      );
+      if (languages != null) {
+        await repository.addHistory(
+          TranslationHistory(
+            id: const Uuid().v4(),
+            sourceText: source,
+            translatedText: translated,
+            sourceLanguage: languages.from,
+            targetLanguage: languages.to,
+            timestamp: DateTime.now(),
+          ),
+        );
+      }
+    } catch (e) {
+      print('Error saving to history: $e');
     }
   }
 
-  // Temporary simulation
   Future<void> _simulateTranscription() async {
     await Future.delayed(const Duration(seconds: 2));
     if (state.isRecording) {
